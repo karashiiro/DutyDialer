@@ -25,6 +25,7 @@ namespace DutyDialer
             this.config.Initialize(this.pluginInterface);
 
             this.services = new PluginServiceCollection();
+            this.services.AddService(new NotificationServer(this.config.WebsocketPort));
 
             this.commandManager = new CommandManager(this.pluginInterface, this.services);
             this.windowManager = new WindowManager(this.services);

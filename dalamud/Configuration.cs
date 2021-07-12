@@ -8,12 +8,13 @@ namespace DutyDialer
     {
         public int Version { get; set; }
 
-        // Add any other properties or methods here.
+        public int WebsocketPort { get; set; }
+
         [JsonIgnore] private DalamudPluginInterface pluginInterface;
 
-        public void Initialize(DalamudPluginInterface pluginInterface)
+        public void Initialize(DalamudPluginInterface pi)
         {
-            this.pluginInterface = pluginInterface;
+            this.pluginInterface = pi;
         }
 
         public void Save()
