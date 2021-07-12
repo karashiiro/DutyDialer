@@ -3,6 +3,7 @@ using Dalamud.CrystalTower.DependencyInjection;
 using Dalamud.CrystalTower.UI;
 using Dalamud.Plugin;
 using System;
+using System.Net.Sockets;
 
 namespace DutyDialer
 {
@@ -15,6 +16,8 @@ namespace DutyDialer
         private PluginServiceCollection services;
         private WindowManager windowManager;
 
+        private Exception wsConstructException;
+
         public string Name => "DutyDialer";
 
         public void Initialize(DalamudPluginInterface pi)
@@ -25,7 +28,15 @@ namespace DutyDialer
             this.config.Initialize(this.pluginInterface);
 
             this.services = new PluginServiceCollection();
-            this.services.AddService(new NotificationServer(this.config.WebsocketPort));
+            try
+            {
+                this.services.AddService(new NotificationServer(this.config.WebsocketPort));
+            }
+            catch (Exception e) when (e is SocketException or ArgumentOutOfRangeException)
+            {
+                // Save the exception to notify the user when they log in
+                this.wsConstructException = e;
+            }
 
             this.commandManager = new CommandManager(this.pluginInterface, this.services);
             this.windowManager = new WindowManager(this.services);
