@@ -8,7 +8,7 @@ namespace DutyDialer
     {
         public int Version { get; set; }
 
-        public int WebsocketPort { get; set; }
+        public int WebsocketPort { get; set; } = 3276;
 
         [JsonIgnore] private DalamudPluginInterface pluginInterface;
 
