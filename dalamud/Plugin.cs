@@ -46,7 +46,7 @@ namespace DutyDialer
             this.commandManager = new CommandManager(this.pluginInterface, this.services);
 
             this.windowManager = new WindowManager(this.services);
-            this.windowManager.AddWindow<ConfigurationWindow>(initiallyVisible: false);
+            this.windowManager.AddWindow<ConfigurationWindow>(Debug.InitiallyVisible);
 
             this.pluginInterface.UiBuilder.OnBuildUi += this.windowManager.Draw;
 
