@@ -9,6 +9,7 @@ class Timer extends StatefulWidget {
 
 class _TimerState extends State<Timer> with TickerProviderStateMixin {
   late AnimationController controller;
+  late Animation<Color?> colorTween;
 
   @override
   void initState() {
@@ -19,6 +20,10 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
     )..addListener(() {
         setState(() {});
       });
+    colorTween = controller.drive(ColorTween(
+      begin: Colors.red,
+      end: Colors.green,
+    ));
     controller.reverse();
     super.initState();
   }
@@ -39,6 +44,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
               quarterTurns: 2,
               child: CircularProgressIndicator(
                 value: controller.value,
+                valueColor: colorTween,
                 backgroundColor: Colors.grey,
                 strokeWidth: 8,
                 semanticsLabel: 'Circular progress indicator',
