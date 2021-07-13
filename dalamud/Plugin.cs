@@ -36,7 +36,9 @@ namespace DutyDialer
             this.services.AddService(this.config);
             try
             {
-                this.services.AddService(new NotificationServer(this.config.WebsocketPort));
+                var server = new NotificationServer(this.config.WebsocketPort);
+                this.services.AddService(server);
+                server.Start();
             }
             catch (Exception e) when (e is SocketException or ArgumentOutOfRangeException)
             {
