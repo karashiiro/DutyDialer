@@ -5,10 +5,9 @@ using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin;
 using DutyDialer.UI;
+using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Net.Sockets;
-using Dalamud.Game.Internal.Network;
-using Lumina.Excel.GeneratedSheets;
 
 namespace DutyDialer
 {
@@ -54,7 +53,7 @@ namespace DutyDialer
             this.pluginInterface.UiBuilder.OnOpenConfigUi += OpenConfigUi;
 
             this.pluginInterface.Framework.Gui.Chat.OnChatMessage += CheckFailedToBindPort;
-            
+
             this.pluginInterface.ClientState.CfPop += ClientStateOnCfPop;
         }
 
