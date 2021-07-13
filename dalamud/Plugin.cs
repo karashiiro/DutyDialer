@@ -7,6 +7,8 @@ using Dalamud.Plugin;
 using DutyDialer.UI;
 using System;
 using System.Net.Sockets;
+using Dalamud.Game.Internal.Network;
+using Lumina.Excel.GeneratedSheets;
 
 namespace DutyDialer
 {
@@ -52,6 +54,15 @@ namespace DutyDialer
             this.pluginInterface.UiBuilder.OnOpenConfigUi += OpenConfigUi;
 
             this.pluginInterface.Framework.Gui.Chat.OnChatMessage += CheckFailedToBindPort;
+            
+            this.pluginInterface.ClientState.CfPop += ClientStateOnCfPop;
+        }
+
+        private void ClientStateOnCfPop(object sender, ContentFinderCondition e)
+        {
+            var notificationServer = this.services.GetService<NotificationServer>();
+            var popTime = DateTime.Now;
+            notificationServer.NotifyPop(popTime);
         }
 
         private bool notifiedFailedToBindPort;
@@ -75,10 +86,13 @@ namespace DutyDialer
         {
             if (!disposing) return;
 
+            this.pluginInterface.ClientState.CfPop -= ClientStateOnCfPop;
+
             this.pluginInterface.Framework.Gui.Chat.OnChatMessage -= CheckFailedToBindPort;
 
             this.commandManager.Dispose();
 
+            this.pluginInterface.UiBuilder.OnOpenConfigUi -= OpenConfigUi;
             this.pluginInterface.UiBuilder.OnBuildUi -= this.windowManager.Draw;
             this.windowManager.Dispose();
 
