@@ -1,9 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:duty_dialer/timer.dart';
+import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() {
+  connectAndListen();
   runApp(App());
 }
 
@@ -38,43 +40,34 @@ void connectAndListen() {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return MaterialApp(
       title: 'DutyDialer',
-      theme: CupertinoThemeData(
-          textTheme: CupertinoTextThemeData(
-              navLargeTitleTextStyle: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 70.0,
-      ))),
-      home: HomePage(title: 'Duty Finder Status'),
+      home: HomePage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(widget.title),
-      ),
-      child: Center(
-        child: StreamBuilder(
-          stream: streamSocket.getResponse,
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            return Text(snapshot.data ?? "");
-          },
+    return Scaffold(
+        body: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Timer(),
+            StreamBuilder(
+              stream: streamSocket.getResponse,
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                return Text(snapshot.data ?? "");
+              },
+            ),
+          ],
         ),
       ),
-    );
+    ));
   }
 }
