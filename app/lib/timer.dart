@@ -21,9 +21,9 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
         setState(() {});
       });
     colorTween = controller.drive(ColorTween(
-      // These get reversed, so it becomes from green to red
+      // These get reversed, so it becomes from yellow to red
       begin: Colors.red,
-      end: Colors.green,
+      end: Colors.yellow,
     ));
     controller.reverse();
     super.initState();
