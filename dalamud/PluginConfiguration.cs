@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace DutyDialer
 {
-    public class Configuration : IPluginConfiguration
+    public class PluginConfiguration : IPluginConfiguration
     {
         public int Version { get; set; }
 

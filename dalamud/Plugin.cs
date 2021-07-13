@@ -2,17 +2,19 @@
 using Dalamud.CrystalTower.DependencyInjection;
 using Dalamud.CrystalTower.UI;
 using Dalamud.Plugin;
+using DutyDialer.UI;
 using System;
 using System.Net.Sockets;
 
 namespace DutyDialer
 {
+    // ReSharper disable once UnusedMember.Global
     public class Plugin : IDalamudPlugin
     {
         private DalamudPluginInterface pluginInterface;
 
         private CommandManager commandManager;
-        private Configuration config;
+        private PluginConfiguration config;
         private PluginServiceCollection services;
         private WindowManager windowManager;
 
@@ -24,10 +26,11 @@ namespace DutyDialer
         {
             this.pluginInterface = pi;
 
-            this.config = (Configuration)this.pluginInterface.GetPluginConfig() ?? new Configuration();
+            this.config = (PluginConfiguration)this.pluginInterface.GetPluginConfig() ?? new PluginConfiguration();
             this.config.Initialize(this.pluginInterface);
 
             this.services = new PluginServiceCollection();
+            this.services.AddService(this.config);
             try
             {
                 this.services.AddService(new NotificationServer(this.config.WebsocketPort));
@@ -39,7 +42,9 @@ namespace DutyDialer
             }
 
             this.commandManager = new CommandManager(this.pluginInterface, this.services);
+
             this.windowManager = new WindowManager(this.services);
+            this.windowManager.AddWindow<ConfigurationWindow>(initiallyVisible: false);
 
             this.pluginInterface.UiBuilder.OnBuildUi += this.windowManager.Draw;
         }
