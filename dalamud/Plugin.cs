@@ -1,6 +1,8 @@
 ﻿using Dalamud.CrystalTower.Commands;
 using Dalamud.CrystalTower.DependencyInjection;
 using Dalamud.CrystalTower.UI;
+using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin;
 using DutyDialer.UI;
 using System;
@@ -18,7 +20,7 @@ namespace DutyDialer
         private PluginServiceCollection services;
         private WindowManager windowManager;
 
-        private Exception wsConstructException;
+        private bool wsFailedToBindPort;
 
         public string Name => "DutyDialer";
 
@@ -37,8 +39,8 @@ namespace DutyDialer
             }
             catch (Exception e) when (e is SocketException or ArgumentOutOfRangeException)
             {
-                // Save the exception to notify the user when they log in
-                this.wsConstructException = e;
+                PluginLog.LogError(e, "Failed to start WebSocket server.");
+                this.wsFailedToBindPort = true;
             }
 
             this.commandManager = new CommandManager(this.pluginInterface, this.services);
@@ -47,12 +49,27 @@ namespace DutyDialer
             this.windowManager.AddWindow<ConfigurationWindow>(initiallyVisible: false);
 
             this.pluginInterface.UiBuilder.OnBuildUi += this.windowManager.Draw;
+
+            this.pluginInterface.Framework.Gui.Chat.OnChatMessage += CheckFailedToBindPort;
+        }
+
+        private bool notifiedFailedToBindPort;
+        private void CheckFailedToBindPort(XivChatType type, uint id, ref SeString sender, ref SeString message, ref bool handled)
+        {
+            if (!this.pluginInterface.ClientState.IsLoggedIn || !this.wsFailedToBindPort || this.notifiedFailedToBindPort) return;
+            var chat = this.pluginInterface.Framework.Gui.Chat;
+            chat.Print($"DutyDialer failed to bind to port {config.WebsocketPort}. " +
+                       "Please close the owner of that port and reload the Websocket server, " +
+                       "or select a different port.");
+            this.notifiedFailedToBindPort = true;
         }
 
         #region IDisposable Support
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
+
+            this.pluginInterface.Framework.Gui.Chat.OnChatMessage -= CheckFailedToBindPort;
 
             this.commandManager.Dispose();
 
