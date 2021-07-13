@@ -4,6 +4,7 @@
 
     <ItemGroup>
       <InputAssemblies Include="$(OutputPath)$(TargetName)$(TargetExt)" />
+      <InputAssemblies Include="$(OutputPath)\Dalamud*.dll" />
       <InputAssemblies Include="$(OutputPath)\websocket-sharp*.dll" />
     </ItemGroup>
 
