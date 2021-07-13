@@ -21,6 +21,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
         setState(() {});
       });
     colorTween = controller.drive(ColorTween(
+      // These get reversed, so it becomes from green to red
       begin: Colors.red,
       end: Colors.green,
     ));
@@ -55,7 +56,8 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
           ),
         ),
         Center(
-          heightFactor: 2.71,
+          heightFactor:
+              2.71, // This prevents a strange 1px gap in the progress ring at 2.7
           child: Text('${(controller.value * 30).floor()}',
               style: TextStyle(fontSize: 64)),
         ),
