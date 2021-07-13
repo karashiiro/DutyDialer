@@ -49,6 +49,7 @@ namespace DutyDialer
             this.windowManager.AddWindow<ConfigurationWindow>(Debug.InitiallyVisible);
 
             this.pluginInterface.UiBuilder.OnBuildUi += this.windowManager.Draw;
+            this.pluginInterface.UiBuilder.OnOpenConfigUi += OpenConfigUi;
 
             this.pluginInterface.Framework.Gui.Chat.OnChatMessage += CheckFailedToBindPort;
         }
@@ -62,6 +63,11 @@ namespace DutyDialer
                        "Please close the owner of that port and reload the Websocket server, " +
                        "or select a different port.");
             this.notifiedFailedToBindPort = true;
+        }
+
+        private void OpenConfigUi(object sender, EventArgs args)
+        {
+            this.windowManager.ShowWindow<ConfigurationWindow>();
         }
 
         #region IDisposable Support
