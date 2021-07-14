@@ -33,7 +33,7 @@ class CountdownView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 20),
           ),
-          Image.network(bannerUrl, height: 200, fit: BoxFit.fitWidth),
+          Image.network(bannerUrl, fit: BoxFit.fitHeight),
         ],
       ),
     );
