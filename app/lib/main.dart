@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 40),
+              padding: const EdgeInsets.only(top: 80),
               child: Center(
                 child: StreamBuilder(
                   stream: streamSocket.getResponse,
@@ -59,7 +59,6 @@ class _HomePageState extends State<HomePage> {
                           streamSocket.connectTo(serverAddress);
                           await streamSocket
                               .waitUntilConnected(Duration(seconds: 10));
-                          print(streamSocket.isConnected());
                           setState(() {});
                         },
                       );
