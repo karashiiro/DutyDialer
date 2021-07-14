@@ -40,6 +40,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
 
   @override
   void didUpdateWidget(Timer oldWidget) {
+    controller.dispose();
     createController();
     super.didUpdateWidget(oldWidget);
   }
