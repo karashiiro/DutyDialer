@@ -63,7 +63,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                 value: controller.value,
                 valueColor: colorTween,
                 backgroundColor: Colors.grey,
-                strokeWidth: 8,
+                strokeWidth: 12,
                 semanticsLabel: 'Circular progress indicator',
               ),
             ),
@@ -85,7 +85,7 @@ double _getPlatformCountdownHeight() {
   if (Platform.isAndroid) {
     return 2.71; // This prevents a strange 1px gap in the progress ring at 2.7
   } else if (Platform.isWindows) {
-    return 2.4;
+    return 2.3;
   } else {
     return 2.5;
   }
