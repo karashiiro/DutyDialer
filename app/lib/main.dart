@@ -3,13 +3,13 @@ import 'dart:math';
 
 import 'package:duty_dialer/countdown_view.dart';
 import 'package:duty_dialer/ipc_message.dart';
+import 'package:duty_dialer/server_address_entry_view.dart';
 import 'package:duty_dialer/web_socket_stream.dart';
 import 'package:flutter/material.dart';
 
 WebSocketStream streamSocket = WebSocketStream();
 
 void main() {
-  streamSocket.connectTo('ws://localhost:3276');
   runApp(App());
 }
 
@@ -29,6 +29,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String serverAddress = '';
   String text = 'Waiting for duty pop';
   String bannerUrl = 'https://xivapi.com/i/100000/100001_hr1.png';
   int queueSeconds = 0;
@@ -48,6 +49,18 @@ class _HomePageState extends State<HomePage> {
                   stream: streamSocket.getResponse,
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (!streamSocket.isConnected()) {
+                      return ServerAddressEntryView(
+                        streamSocket: streamSocket,
+                        onAddressFieldChanged: (text) {
+                          serverAddress = text;
+                        },
+                        onConnectButtonPressed: () {
+                          streamSocket.connectTo(serverAddress);
+                        },
+                      );
+                    }
+
                     if (snapshot.hasData) {
                       final data =
                           IpcMessage.fromJson(jsonDecode(snapshot.data!));

@@ -8,12 +8,29 @@ class WebSocketStream {
 
   Stream<String> get getResponse => _socketResponse.stream;
 
+  bool isConnected() {
+    return _channel != null;
+  }
+
   void connectTo(String server) {
     _channel?.sink.close(status.goingAway);
-    _channel = IOWebSocketChannel.connect(server);
-    _channel!.stream.listen((message) {
-      _socketResponse.sink.add(message);
-    });
+
+    try {
+      _channel = IOWebSocketChannel.connect(server);
+    } catch (error) {
+      print(error);
+      return;
+    }
+
+    _channel!.stream.listen(
+      (message) {
+        _socketResponse.sink.add(message);
+      },
+      onError: (error) {
+        print(error);
+        _channel = null;
+      },
+    );
   }
 
   void dispose() {
