@@ -1,7 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class Timer extends StatefulWidget {
-  const Timer({Key? key}) : super(key: key);
+  const Timer({Key? key, required this.seconds, required this.maxSeconds})
+      : super(key: key);
+
+  final int seconds;
+  final int maxSeconds;
 
   @override
   _TimerState createState() => _TimerState();
@@ -11,12 +16,11 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Color?> colorTween;
 
-  @override
-  void initState() {
+  void createController() {
     controller = AnimationController(
       vsync: this,
-      value: 1.0,
-      duration: const Duration(seconds: 30),
+      value: widget.seconds * 1.0 / widget.maxSeconds,
+      duration: Duration(seconds: widget.maxSeconds),
     )..addListener(() {
         setState(() {});
       });
@@ -26,7 +30,18 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
       end: Colors.yellow,
     ));
     controller.reverse();
+  }
+
+  @override
+  void initState() {
+    createController();
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(Timer oldWidget) {
+    createController();
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -56,12 +71,21 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
           ),
         ),
         Center(
-          heightFactor:
-              2.71, // This prevents a strange 1px gap in the progress ring at 2.7
-          child: Text('${(controller.value * 30).floor()}',
+          heightFactor: _getPlatformCountdownHeight(),
+          child: Text('${(controller.value * widget.maxSeconds).ceil()}',
               style: TextStyle(fontSize: 64)),
         ),
       ],
     );
+  }
+}
+
+double _getPlatformCountdownHeight() {
+  if (Platform.isAndroid) {
+    return 2.71; // This prevents a strange 1px gap in the progress ring at 2.7
+  } else if (Platform.isWindows) {
+    return 2.4;
+  } else {
+    return 2.5;
   }
 }

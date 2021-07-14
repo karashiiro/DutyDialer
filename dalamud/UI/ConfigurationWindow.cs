@@ -48,7 +48,7 @@ namespace DutyDialer.UI
                     }
                 }
 
-                ImGui.TextColored(new Vector4(1.0f, 1.0f, 1.0f, 0.6f), $"{(Server.Active ? "Started" : "Will start")} on ws://localhost:{Server.Port}");
+                ImGui.TextColored(new Vector4(1.0f, 1.0f, 1.0f, 0.6f), $"{(Server.Active ? "Started" : "Will start")} on {Server.Address}");
 
                 ImGui.Spacing();
 

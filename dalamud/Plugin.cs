@@ -62,8 +62,14 @@ namespace DutyDialer
         private void ClientStateOnCfPop(object sender, ContentFinderCondition e)
         {
             var notificationServer = this.services.GetService<NotificationServer>();
-            var popTime = DateTime.Now;
-            notificationServer.NotifyPop(popTime);
+            var popTime = DateTime.UtcNow;
+            var bannerUri = GetImageUrl(e.Image);
+            notificationServer.NotifyPop(popTime, e.Name, bannerUri);
+        }
+
+        private static string GetImageUrl(uint id)
+        {
+            return $"https://xivapi.com/i/{id / 1000 * 1000:000000}/{id}_hr1.png";
         }
 
         private bool notifiedFailedToBindPort;

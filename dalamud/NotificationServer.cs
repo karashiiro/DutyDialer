@@ -3,14 +3,14 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using Dalamud.Plugin;
+using WebSocketSharp;
 using WebSocketSharp.Server;
 
 namespace DutyDialer
 {
     public class NotificationServer
     {
-        private const string Endpoint = "/DutyDialer";
-
         private readonly ServerBehavior behavior;
 
         private WebSocketServer server;
@@ -33,20 +33,22 @@ namespace DutyDialer
 
         public bool Active { get; private set; }
 
+        public string Address => $"ws://localhost:{Port}";
+
         public NotificationServer(int port)
         {
             Port = port;
 
             this.server = new WebSocketServer(Port);
             this.behavior = new ServerBehavior();
-            this.server.AddWebSocketService(Endpoint, () => this.behavior);
+            this.server.AddWebSocketService("/", () => this.behavior);
         }
 
-        public void NotifyPop(DateTime popTime)
+        public void NotifyPop(DateTime popTime, string contentName, string bannerUri)
         {
             if (!Active) throw new InvalidOperationException("Server is not active!");
 
-            var ipcMessage = new IpcMessage(IpcMessageType.Pop, new DateTimeOffset(popTime).ToUnixTimeMilliseconds());
+            var ipcMessage = new IpcMessage(IpcMessageType.Pop, new DateTimeOffset(popTime).ToUnixTimeMilliseconds(), contentName, bannerUri);
             this.behavior.SendMessage(JsonConvert.SerializeObject(ipcMessage));
         }
 
@@ -69,7 +71,7 @@ namespace DutyDialer
             Port = newPort;
             Stop();
             this.server = new WebSocketServer(Port);
-            this.server.AddWebSocketService(Endpoint, () => this.behavior);
+            this.server.AddWebSocketService("/", () => this.behavior);
             Start();
         }
 
@@ -89,9 +91,14 @@ namespace DutyDialer
                 Send(message);
             }
 
+            protected override void OnOpen()
+            {
+                PluginLog.Log("A client opened a new connection");
+            }
+
             // Enable re-use of a websocket if the client disconnects
             // https://github.com/sta/websocket-sharp/issues/144
-            protected override void OnClose(WebSocketSharp.CloseEventArgs e)
+            protected override void OnClose(CloseEventArgs e)
             {
                 base.OnClose(e);
 
@@ -105,20 +112,30 @@ namespace DutyDialer
         private class IpcMessage
         {
             [JsonProperty("type")]
-            public string Type { get; private set; }
+            public string Type { get; }
 
             [JsonProperty("unix_milliseconds")]
-            public string UnixMilliseconds { get; private set; }
+            public string UnixMilliseconds { get; }
 
-            public IpcMessage(IpcMessageType type, long unixMilliseconds)
+            [JsonProperty("content_name")]
+            public string ContentName { get; }
+
+            [JsonProperty("banner")]
+            public string Banner { get; }
+
+            public IpcMessage(IpcMessageType type, long unixMilliseconds, string contentName, string bannerUri)
             {
                 Type = type.ToString();
                 UnixMilliseconds = unixMilliseconds.ToString();
+                ContentName = contentName;
+                Banner = bannerUri;
             }
         }
 
         private enum IpcMessageType
         {
+            // ReSharper disable once UnusedMember.Local
+            // ReSharper disable once UnusedMember.Global
             None,
             Pop,
         }
