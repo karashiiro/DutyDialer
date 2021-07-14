@@ -1,39 +1,16 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
 import 'package:duty_dialer/countdown_view.dart';
 import 'package:duty_dialer/ipc_message.dart';
+import 'package:duty_dialer/web_socket_stream.dart';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/io.dart';
+
+WebSocketStream streamSocket = WebSocketStream();
 
 void main() {
-  connectAndListen();
+  streamSocket.connectTo('ws://localhost:3276');
   runApp(App());
-}
-
-class StreamSocket {
-  final _socketResponse = StreamController<String>();
-
-  void Function(String) get addResponse => _socketResponse.sink.add;
-
-  Stream<String> get getResponse => _socketResponse.stream;
-
-  void dispose() {
-    _socketResponse.close();
-  }
-}
-
-StreamSocket streamSocket = StreamSocket();
-
-void connectAndListen() {
-  final server = 'ws://localhost:3276';
-
-  final channel = IOWebSocketChannel.connect(server);
-
-  channel.stream.listen((message) {
-    streamSocket.addResponse(message);
-  });
 }
 
 class App extends StatelessWidget {
