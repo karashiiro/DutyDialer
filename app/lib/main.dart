@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:duty_dialer/countdown_view.dart';
 import 'package:duty_dialer/ipc_message.dart';
-import 'package:duty_dialer/timer.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -86,27 +86,10 @@ class _HomePageState extends State<HomePage> {
                           0);
                     }
 
-                    return Column(
-                      children: <Widget>[
-                        Timer(
-                          seconds: queueSeconds,
-                          maxSeconds: 45,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 40),
-                        ),
-                        Text(
-                          text,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 36, fontWeight: FontWeight.w600),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                        ),
-                        Image.network(bannerUrl,
-                            height: 200, fit: BoxFit.fitWidth),
-                      ],
+                    return CountdownView(
+                      queueSeconds: queueSeconds,
+                      text: text,
+                      bannerUrl: bannerUrl,
                     );
                   },
                 ),
