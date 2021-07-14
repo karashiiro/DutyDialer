@@ -8,6 +8,16 @@ class WebSocketStream {
 
   Stream<String> get getResponse => _socketResponse.stream;
 
+  Future waitUntilConnected(Duration timeout) {
+    return Future.any([
+      Future.delayed(timeout),
+      Future.doWhile(() async {
+        await Future.delayed(Duration(milliseconds: 20));
+        return !isConnected();
+      }),
+    ]);
+  }
+
   bool isConnected() {
     return _channel != null;
   }

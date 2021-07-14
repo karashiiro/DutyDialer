@@ -55,8 +55,12 @@ class _HomePageState extends State<HomePage> {
                         onAddressFieldChanged: (text) {
                           serverAddress = text;
                         },
-                        onConnectButtonPressed: () {
+                        onConnectButtonPressed: () async {
                           streamSocket.connectTo(serverAddress);
+                          await streamSocket
+                              .waitUntilConnected(Duration(seconds: 10));
+                          print(streamSocket.isConnected());
+                          setState(() {});
                         },
                       );
                     }
