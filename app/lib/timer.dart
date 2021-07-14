@@ -83,7 +83,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
 
 double _getPlatformCountdownHeight() {
   if (Platform.isAndroid) {
-    return 2.71; // This prevents a strange 1px gap in the progress ring at 2.7
+    return 2.7;
   } else if (Platform.isWindows) {
     return 2.3;
   } else {
