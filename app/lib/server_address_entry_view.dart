@@ -1,7 +1,7 @@
 import 'package:duty_dialer/web_socket_stream.dart';
 import 'package:flutter/material.dart';
 
-class ServerAddressEntryView extends StatefulWidget {
+class ServerAddressEntryView extends StatelessWidget {
   const ServerAddressEntryView(
       {Key? key,
       required this.streamSocket,
@@ -13,11 +13,6 @@ class ServerAddressEntryView extends StatefulWidget {
   final void Function(String) onAddressFieldChanged;
   final void Function() onConnectButtonPressed;
 
-  @override
-  _ServerAddressEntryViewState createState() => _ServerAddressEntryViewState();
-}
-
-class _ServerAddressEntryViewState extends State<ServerAddressEntryView> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,14 +33,14 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView> {
                 Container(
                   width: MediaQuery.of(context).size.width - 168,
                   child: TextField(
-                    onChanged: widget.onAddressFieldChanged,
+                    onChanged: onAddressFieldChanged,
                     decoration:
                         InputDecoration(hintText: 'Plugin server address'),
                   ),
                 ),
                 Spacer(),
                 ElevatedButton(
-                  onPressed: widget.onConnectButtonPressed,
+                  onPressed: onConnectButtonPressed,
                   style: ButtonStyle(
                     fixedSize: MaterialStateProperty.all(Size(120, 45)),
                     textStyle: MaterialStateProperty.all(TextStyle(
