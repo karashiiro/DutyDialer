@@ -25,15 +25,21 @@ class CountdownView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 40),
           ),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),
+          Container(
+            height: 150,
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),
+            ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
+          Container(
+            height: 150,
+            child: Image.network(
+              bannerUrl,
+              fit: BoxFit.fitWidth,
+            ),
           ),
-          Image.network(bannerUrl, fit: BoxFit.fitHeight),
         ],
       ),
     );
