@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             Padding(
               padding:
-                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 12),
+                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 6),
             ),
             Center(
               child: StreamBuilder(

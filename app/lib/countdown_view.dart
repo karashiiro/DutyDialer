@@ -23,7 +23,8 @@ class CountdownView extends StatelessWidget {
             maxSeconds: 45,
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 40),
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).size.height / 10),
           ),
           Container(
             height: 150,
