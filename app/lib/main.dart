@@ -26,7 +26,7 @@ class App extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  final popSoundPlayer = AudioPlayer();
+  final popSoundPlayer = !Platform.isWindows ? AudioPlayer() : null;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -38,8 +38,8 @@ class _HomePageState extends State<HomePage> {
   String bannerUrl = 'https://xivapi.com/i/100000/100001_hr1.png';
   int queueSeconds = 0;
 
-  late Future loadSoundFuture =
-      widget.popSoundPlayer.setAsset('assets/sounds/lb_charged.mp3');
+  late Future? loadSoundFuture =
+      widget.popSoundPlayer?.setAsset('assets/sounds/lb_charged.mp3');
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                       } else {
                         (() async {
                           await loadSoundFuture;
-                          widget.popSoundPlayer.play();
+                          widget.popSoundPlayer?.play();
                         })();
                       }
                     }
