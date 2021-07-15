@@ -1,12 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:duty_dialer/countdown_view.dart';
 import 'package:duty_dialer/ipc_message.dart';
 import 'package:duty_dialer/server_address_entry_view.dart';
 import 'package:duty_dialer/web_socket_stream.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 
 WebSocketStream streamSocket = WebSocketStream();
 
@@ -25,7 +26,7 @@ class App extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  static AudioCache player = AudioCache(prefix: 'assets/sounds/');
+  final popSoundPlayer = AudioPlayer();
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -36,6 +37,9 @@ class _HomePageState extends State<HomePage> {
   String text = 'Waiting for duty pop';
   String bannerUrl = 'https://xivapi.com/i/100000/100001_hr1.png';
   int queueSeconds = 0;
+
+  late Future loadSoundFuture =
+      widget.popSoundPlayer.setAsset('assets/sounds/lb_charged.mp3');
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +85,14 @@ class _HomePageState extends State<HomePage> {
                               .inSeconds,
                           0);
 
-                      HomePage.player.play('lb_charged.mp3');
+                      if (Platform.isWindows) {
+                        print("audio is not supported on this platform.");
+                      } else {
+                        (() async {
+                          await loadSoundFuture;
+                          widget.popSoundPlayer.play();
+                        })();
+                      }
                     }
 
                     return CountdownView(
