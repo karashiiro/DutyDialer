@@ -41,11 +41,11 @@ class ServerAddressEntryView extends StatelessWidget {
                 Spacer(),
                 ElevatedButton(
                   onPressed: onConnectButtonPressed,
-                  style: ButtonStyle(
-                    fixedSize: MaterialStateProperty.all(Size(120, 45)),
-                    textStyle: MaterialStateProperty.all(TextStyle(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(120, 45),
+                    textStyle: TextStyle(
                       fontSize: 18,
-                    )),
+                    ),
                   ),
                   child: Text('Connect'),
                 ),
