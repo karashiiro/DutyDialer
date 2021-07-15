@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:duty_dialer/countdown_view.dart';
 import 'package:duty_dialer/ipc_message.dart';
 import 'package:duty_dialer/server_address_entry_view.dart';
@@ -24,6 +25,8 @@ class App extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
+  static AudioCache player = AudioCache(prefix: 'assets/sounds/');
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -77,6 +80,8 @@ class _HomePageState extends State<HomePage> {
                               .difference(DateTime.now().toUtc())
                               .inSeconds,
                           0);
+
+                      HomePage.player.play('lb_charged.mp3');
                     }
 
                     return CountdownView(
