@@ -63,7 +63,7 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                 value: controller.value,
                 valueColor: colorTween,
                 backgroundColor: Colors.grey,
-                strokeWidth: 12,
+                strokeWidth: 8,
                 semanticsLabel: 'Circular progress indicator',
               ),
             ),
