@@ -21,6 +21,16 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'DutyDialer',
       home: HomePage(),
+      theme: ThemeData(
+        scaffoldBackgroundColor: Color(0xFFFFEEDF),
+        backgroundColor: Color(0xFFBA9D7E),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all(Colors.black),
+          backgroundColor: MaterialStateProperty.all(Color(0xFFFF9334)),
+          shadowColor: MaterialStateProperty.all(Color(0xFFFFEEDF)),
+        )),
+      ),
     );
   }
 }
@@ -34,7 +44,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String serverAddress = '';
-  String text = 'Waiting for duty pop';
+  String text = 'Waiting for duty pop…';
   String bannerUrl = 'https://xivapi.com/i/100000/100001_hr1.png';
   int queueSeconds = 0;
 

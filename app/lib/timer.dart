@@ -2,11 +2,22 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class Timer extends StatefulWidget {
-  const Timer({Key? key, required this.seconds, required this.maxSeconds})
+  const Timer(
+      {Key? key,
+      required this.seconds,
+      required this.maxSeconds,
+      this.strokeWidth,
+      this.startColor,
+      this.endColor,
+      this.backgroundColor})
       : super(key: key);
 
+  final Color? startColor;
+  final Color? endColor;
+  final Color? backgroundColor;
   final int seconds;
   final int maxSeconds;
+  final double? strokeWidth;
 
   @override
   _TimerState createState() => _TimerState();
@@ -26,8 +37,8 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
       });
     colorTween = controller.drive(ColorTween(
       // These get reversed, so it becomes from yellow to red
-      begin: Colors.red,
-      end: Colors.yellow,
+      begin: widget.endColor ?? Colors.red,
+      end: widget.startColor ?? Colors.yellow,
     ));
     controller.reverse();
   }
@@ -62,8 +73,8 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
               child: CircularProgressIndicator(
                 value: controller.value,
                 valueColor: colorTween,
-                backgroundColor: Colors.grey,
-                strokeWidth: 8,
+                backgroundColor: widget.backgroundColor ?? Colors.grey,
+                strokeWidth: widget.strokeWidth ?? 8,
                 semanticsLabel: 'Circular progress indicator',
               ),
             ),

@@ -21,6 +21,9 @@ class CountdownView extends StatelessWidget {
           Timer(
             seconds: queueSeconds,
             maxSeconds: 45,
+            strokeWidth: 10,
+            startColor: Color(0xFFFFB700),
+            backgroundColor: Theme.of(context).backgroundColor,
           ),
           Padding(
             padding:
@@ -31,7 +34,7 @@ class CountdownView extends StatelessWidget {
             child: Text(
               text,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 36, fontWeight: FontWeight.w400),
             ),
           ),
           Container(
