@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:duty_dialer/countdown_view.dart';
 import 'package:duty_dialer/ipc_message.dart';
+import 'package:duty_dialer/se_license.dart';
 import 'package:duty_dialer/server_address_entry_view.dart';
 import 'package:duty_dialer/web_socket_stream.dart';
 import 'package:flutter/material.dart';
@@ -54,70 +55,76 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding:
-                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 6),
-            ),
-            Center(
-              child: StreamBuilder(
-                stream: streamSocket.getResponse,
-                builder:
-                    (BuildContext context, AsyncSnapshot<String> snapshot) {
-                  if (!streamSocket.isConnected()) {
-                    return ServerAddressEntryView(
-                      streamSocket: streamSocket,
-                      onAddressFieldChanged: (text) {
-                        serverAddress = text;
+      body: Stack(
+        children: <Widget>[
+          SquareEnixLicenseInfo(),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height / 6),
+                  ),
+                  Center(
+                    child: StreamBuilder(
+                      stream: streamSocket.getResponse,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (!streamSocket.isConnected()) {
+                          return ServerAddressEntryView(
+                            streamSocket: streamSocket,
+                            onAddressFieldChanged: (text) {
+                              serverAddress = text;
+                            },
+                            onConnectButtonPressed: () async {
+                              streamSocket.connectTo(serverAddress);
+                              await streamSocket
+                                  .waitUntilConnected(Duration(seconds: 10));
+                              setState(() {});
+                            },
+                          );
+                        }
+
+                        if (snapshot.hasData) {
+                          final data =
+                              IpcMessage.fromJson(jsonDecode(snapshot.data!));
+                          text = 'Duty pop: ${data.contentName}';
+                          bannerUrl = data.banner;
+                          queueSeconds = max(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                      data.unixMilliseconds,
+                                      isUtc: true)
+                                  .add(Duration(seconds: 45))
+                                  .difference(DateTime.now().toUtc())
+                                  .inSeconds,
+                              0);
+
+                          if (Platform.isWindows) {
+                            print("audio is not supported on this platform.");
+                          } else {
+                            (() async {
+                              await loadSoundFuture;
+                              widget.popSoundPlayer?.play();
+                            })();
+                          }
+                        }
+
+                        return CountdownView(
+                          queueSeconds: queueSeconds,
+                          text: text,
+                          bannerUrl: bannerUrl,
+                        );
                       },
-                      onConnectButtonPressed: () async {
-                        streamSocket.connectTo(serverAddress);
-                        await streamSocket
-                            .waitUntilConnected(Duration(seconds: 10));
-                        setState(() {});
-                      },
-                    );
-                  }
-
-                  if (snapshot.hasData) {
-                    final data =
-                        IpcMessage.fromJson(jsonDecode(snapshot.data!));
-                    text = 'Duty pop: ${data.contentName}';
-                    bannerUrl = data.banner;
-                    queueSeconds = max(
-                        DateTime.fromMillisecondsSinceEpoch(
-                                data.unixMilliseconds,
-                                isUtc: true)
-                            .add(Duration(seconds: 45))
-                            .difference(DateTime.now().toUtc())
-                            .inSeconds,
-                        0);
-
-                    if (Platform.isWindows) {
-                      print("audio is not supported on this platform.");
-                    } else {
-                      (() async {
-                        await loadSoundFuture;
-                        widget.popSoundPlayer?.play();
-                      })();
-                    }
-                  }
-
-                  return CountdownView(
-                    queueSeconds: queueSeconds,
-                    text: text,
-                    bannerUrl: bannerUrl,
-                  );
-                },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          )
+        ],
       ),
-    ));
+    );
   }
 }
