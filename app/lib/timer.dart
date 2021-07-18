@@ -6,6 +6,7 @@ class Timer extends StatefulWidget {
       {Key? key,
       required this.seconds,
       required this.maxSeconds,
+      this.size,
       this.strokeWidth,
       this.startColor,
       this.endColor,
@@ -17,6 +18,7 @@ class Timer extends StatefulWidget {
   final Color? backgroundColor;
   final int seconds;
   final int maxSeconds;
+  final double? size;
   final double? strokeWidth;
 
   @override
@@ -78,12 +80,13 @@ class _TimerState extends State<Timer> with TickerProviderStateMixin {
                 semanticsLabel: 'Circular progress indicator',
               ),
             ),
-            height: 200,
-            width: 200,
+            height: widget.size ?? 200,
+            width: widget.size ?? 200,
           ),
         ),
         Center(
-          heightFactor: _getPlatformCountdownHeight(),
+          heightFactor:
+              _getPlatformCountdownHeight() * ((widget.size ?? 200) / 200),
           child: Text('${(controller.value * widget.maxSeconds).ceil()}',
               style: TextStyle(fontSize: 64)),
         ),

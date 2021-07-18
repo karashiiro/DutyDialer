@@ -21,20 +21,24 @@ class CountdownView extends StatelessWidget {
           Timer(
             seconds: queueSeconds,
             maxSeconds: 45,
+            size: MediaQuery.of(context).size.width <= 480 ? 150 : null,
             strokeWidth: 10,
             startColor: Color(0xFFFFB700),
             backgroundColor: Theme.of(context).backgroundColor,
           ),
           Padding(
-            padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height / 10),
+            padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height /
+                    (MediaQuery.of(context).size.width <= 480 ? 18 : 10)),
           ),
           Container(
-            height: 150,
+            height: MediaQuery.of(context).size.width <= 480 ? 80 : 150,
             child: Text(
               text,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 36, fontWeight: FontWeight.w400),
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width <= 480 ? 24 : 36,
+                  fontWeight: FontWeight.w400),
             ),
           ),
           Container(
