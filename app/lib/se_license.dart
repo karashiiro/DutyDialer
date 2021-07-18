@@ -12,7 +12,8 @@ class SquareEnixLicenseInfo extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: Text(
             'FINAL FANTASY XIV © 2010-2021 SQUARE ENIX CO., LTD. All Rights Reserved.',
-            style: TextStyle(fontSize: 10),
+            style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width <= 480 ? 8 : 10),
             textAlign: TextAlign.right,
           ),
         ),
