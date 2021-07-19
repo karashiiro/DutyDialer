@@ -4,6 +4,7 @@ using Dalamud.CrystalTower.UI;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin;
+using DutyDialer.Modules;
 using DutyDialer.UI;
 using Lumina.Excel.GeneratedSheets;
 using System;
@@ -47,6 +48,7 @@ namespace DutyDialer
             }
 
             this.commandManager = new CommandManager(this.pluginInterface, this.services);
+            this.commandManager.AddCommandModule<ConfigurationModule>();
 
             this.windowManager = new WindowManager(this.services);
             this.windowManager.AddWindow<ConfigurationWindow>(Debug.InitiallyVisible);
