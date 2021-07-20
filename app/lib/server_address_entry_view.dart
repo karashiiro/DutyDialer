@@ -73,9 +73,10 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
   void connect() async {
     streamSocket.connectTo(serverAddress);
     await streamSocket.waitUntilConnected(Duration(seconds: 10));
-    if (!streamSocket.isConnected()) {
+    widget.onConnected(streamSocket);
+    /*if (!streamSocket.isConnected()) {
       widget.onConnected(streamSocket);
-    }
+    }*/
   }
 
   @override
