@@ -110,6 +110,8 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
                               Container(
                                 width: MediaQuery.of(context).size.width - 144,
                                 child: TextField(
+                                  onSubmitted: (_) =>
+                                      widget.onConnectActivated(),
                                   onChanged: widget.onAddressChanged,
                                   decoration: InputDecoration(
                                     hintText: 'Plugin server address',
