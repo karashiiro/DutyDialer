@@ -3,6 +3,7 @@ import 'package:duty_dialer/se_license.dart';
 import 'package:duty_dialer/server_address_entry_view.dart';
 import 'package:duty_dialer/web_socket_stream.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 WebSocketStream streamSocket = WebSocketStream();
 
@@ -19,7 +20,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DutyDialer',
-      home: HomePage(),
+      home: KeyboardVisibilityProvider(
+        child: HomePage(),
+      ),
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFFFFEEDF),
         backgroundColor: themePrimaryColorShade,
@@ -69,6 +72,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: <Widget>[
           ServerAddressEntryView(

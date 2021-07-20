@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ServerAddressEntryView extends StatefulWidget {
@@ -91,7 +92,9 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
           Column(
             children: [
               Expanded(
-                flex: 4,
+                flex: KeyboardVisibilityProvider.isKeyboardVisible(context)
+                    ? 0
+                    : 4,
                 child: Container(),
               ),
               Expanded(
@@ -100,7 +103,7 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
                   child: Stack(
                     children: [
                       Container(
-                        color: Colors.black26,
+                        color: Colors.black45,
                       ),
                       Center(
                         child: Padding(

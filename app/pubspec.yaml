@@ -27,6 +27,7 @@ dependencies:
   web_socket_channel: ^2.1.0
   just_audio: ^0.8.0
   qr_code_scanner: ^0.5.2
+  flutter_keyboard_visibility: ^5.0.2
 
 dev_dependencies:
   flutter_test:
