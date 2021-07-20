@@ -86,7 +86,7 @@ class _CountdownPageState extends State<CountdownPage> {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 30),
+                padding: const EdgeInsets.only(top: 40),
               ),
               RawMaterialButton(
                 onPressed: () {
