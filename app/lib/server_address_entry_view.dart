@@ -80,6 +80,7 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
           QRView(
             key: GlobalKey(),
             onQRViewCreated: _onQRViewCreated,
+            formatsAllowed: [BarcodeFormat.qrcode],
             overlay: QrScannerOverlayShape(
                 borderColor: const Color(0xFFFF9334),
                 borderRadius: 10,
@@ -114,6 +115,11 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
                                     hintText: 'Plugin server address',
                                     hintStyle: TextStyle(
                                       color: Colors.white70,
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: const Color(0xFFFF9334),
+                                      ),
                                     ),
                                   ),
                                   style: TextStyle(
