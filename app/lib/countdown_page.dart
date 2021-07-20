@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:duty_dialer/countdown_view.dart';
 import 'package:duty_dialer/ipc_message.dart';
+import 'package:duty_dialer/se_license.dart';
 import 'package:duty_dialer/web_socket_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -102,6 +103,7 @@ class _CountdownPageState extends State<CountdownPage> {
               ),
             ],
           ),
+          SquareEnixLicenseInfo(),
         ],
       ),
     );
