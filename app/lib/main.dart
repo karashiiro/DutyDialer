@@ -14,7 +14,7 @@ void main() {
 class App extends StatelessWidget {
   final themePrimaryColor = const Color(0xFFFF9334);
   final themePrimaryColorShade = const Color(0xFFBA9D7E);
-  final themePrimaryColorTint = const Color(0xFFFFD21F);
+  final themePrimaryColorTint = const Color(0xFFF9AE3E);
 
   @override
   Widget build(BuildContext context) {
