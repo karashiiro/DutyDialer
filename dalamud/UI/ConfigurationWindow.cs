@@ -5,18 +5,39 @@ using System;
 using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DutyDialer.UI
 {
-    public class ConfigurationWindow : ImmediateModeWindow
+    public class ConfigurationWindow : ImmediateModeWindow, IDisposable
     {
+        private static readonly Vector4 HintColor = new(1.0f, 1.0f, 1.0f, 0.6f);
         private static readonly Vector4 Red = new(1, 0, 0, 1);
+
+        private UrlQrCode qrCode;
+        private bool once;
 
         public NotificationServer Server { get; set; }
         public PluginConfiguration Configuration { get; set; }
+        public DalamudPluginInterface PluginInterface { get; set; }
+
+        private void CreateQrCode()
+        {
+            this.qrCode?.Dispose();
+            this.qrCode = new UrlQrCode(Server.Address);
+            //_ = Task.Run(() => this.qrCode.GenerateImage(PluginInterface));
+            this.qrCode.GenerateImage(PluginInterface);
+        }
 
         public override void Draw(ref bool visible)
         {
+            // Don't run this before everything is initialized
+            if (!this.once && Server?.Address != null)
+            {
+                CreateQrCode();
+                this.once = true;
+            }
+
             ImGui.Begin("DutyDialer Configuration", ImGuiWindowFlags.AlwaysAutoResize);
             {
                 var port = Configuration.WebsocketPort;
@@ -32,6 +53,8 @@ namespace DutyDialer.UI
                         {
                             Server.RestartWithPort(newPort);
                             Configuration.WebsocketPort = newPort;
+
+                            CreateQrCode();
                         }
                         catch (ArgumentOutOfRangeException)
                         {
@@ -48,7 +71,7 @@ namespace DutyDialer.UI
                     }
                 }
 
-                ImGui.TextColored(new Vector4(1.0f, 1.0f, 1.0f, 0.6f), $"{(Server.Active ? "Started" : "Will start")} on {Server.Address}");
+                ImGui.TextColored(HintColor, $"{(Server.Active ? "Started" : "Will start")} on {Server.Address}");
 
                 ImGui.Spacing();
 
@@ -56,8 +79,21 @@ namespace DutyDialer.UI
                 {
                     Server.RestartWithPort(Configuration.WebsocketPort);
                 }
+
+                if (this.qrCode != null && this.qrCode.IsReady)
+                {
+                    ImGui.Spacing();
+                    ImGui.Spacing();
+                    ImGui.Image(this.qrCode.Result!.ImGuiHandle, new Vector2(200, 200));
+                    ImGui.TextColored(HintColor, "Scan this QR code with the mobile app to connect to the game!");
+                }
             }
             ImGui.End();
+        }
+
+        public void Dispose()
+        {
+            this.qrCode?.Dispose();
         }
     }
 }

@@ -34,6 +34,7 @@ namespace DutyDialer
             this.config.Initialize(this.pluginInterface);
 
             this.services = new PluginServiceCollection();
+            this.services.AddService(this.pluginInterface, shouldDispose: false);
             this.services.AddService(this.config);
             try
             {
