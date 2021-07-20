@@ -1,56 +1,146 @@
-import 'package:duty_dialer/web_socket_stream.dart';
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:io';
 
-class ServerAddressEntryView extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+
+class ServerAddressEntryView extends StatefulWidget {
   const ServerAddressEntryView(
       {Key? key,
-      required this.streamSocket,
-      required this.onAddressFieldChanged,
-      required this.onConnectButtonPressed})
+      required this.onAddressChanged,
+      required this.onConnectActivated})
       : super(key: key);
 
-  final WebSocketStream streamSocket;
-  final void Function(String) onAddressFieldChanged;
-  final void Function() onConnectButtonPressed;
+  final void Function(String) onAddressChanged;
+  final void Function() onConnectActivated;
+
+  @override
+  _ServerAddressEntryViewState createState() => _ServerAddressEntryViewState();
+}
+
+class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
+    with RouteAware {
+  late RouteObserver routeObserver;
+
+  QRViewController? controller;
+  StreamSubscription? subscription;
+
+  @override
+  void initState() {
+    routeObserver = RouteObserver<PageRoute>();
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      controller?.pauseCamera();
+    } else if (Platform.isIOS) {
+      controller?.resumeCamera();
+    }
+  }
+
+  @override
+  void didPopNext() {
+    setState(() {});
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    subscription = controller.scannedDataStream.listen((scanData) {
+      widget.onAddressChanged(scanData.code);
+      widget.onConnectActivated();
+    });
+  }
+
+  @override
+  void dispose() {
+    subscription?.cancel();
+    controller?.dispose();
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 150.0
+        : 300.0;
     return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: <Widget>[
-          Text(
-            'DutyDialer',
-            style: TextStyle(fontSize: 48, fontWeight: FontWeight.w600),
+          QRView(
+            key: GlobalKey(),
+            onQRViewCreated: _onQRViewCreated,
+            overlay: QrScannerOverlayShape(
+                borderColor: const Color(0xFFFF9334),
+                borderRadius: 10,
+                borderLength: 50,
+                borderWidth: 10,
+                cutOutSize: scanArea),
           ),
-          Padding(
-            padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height / 6),
-          ),
-          Center(
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width - 168,
-                  child: TextField(
-                    onChanged: onAddressFieldChanged,
-                    decoration:
-                        InputDecoration(hintText: 'Plugin server address'),
+          Column(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Container(),
+              ),
+              Expanded(
+                flex: 1,
+                child: Center(
+                  child: Stack(
+                    children: [
+                      Container(
+                        color: Colors.black26,
+                      ),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width - 144,
+                                child: TextField(
+                                  onChanged: widget.onAddressChanged,
+                                  decoration: InputDecoration(
+                                    hintText: 'Plugin server address',
+                                    hintStyle: TextStyle(
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ),
+                              Spacer(),
+                              OutlinedButton(
+                                onPressed: widget.onConnectActivated,
+                                style: OutlinedButton.styleFrom(
+                                  fixedSize: Size(120, 45),
+                                  textStyle: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                child: Text('Connect'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Spacer(),
-                ElevatedButton(
-                  onPressed: onConnectButtonPressed,
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(120, 45),
-                    textStyle: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  child: Text('Connect'),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
