@@ -1,19 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:duty_dialer/web_socket_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ServerAddressEntryView extends StatefulWidget {
-  const ServerAddressEntryView(
-      {Key? key,
-      required this.onAddressChanged,
-      required this.onConnectActivated})
+  const ServerAddressEntryView({Key? key, required this.onConnected})
       : super(key: key);
 
-  final void Function(String) onAddressChanged;
-  final void Function() onConnectActivated;
+  final void Function(WebSocketStream) onConnected;
 
   @override
   _ServerAddressEntryViewState createState() => _ServerAddressEntryViewState();
@@ -22,13 +19,17 @@ class ServerAddressEntryView extends StatefulWidget {
 class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
     with RouteAware {
   late RouteObserver routeObserver;
+  late WebSocketStream streamSocket;
 
   QRViewController? controller;
   StreamSubscription? subscription;
 
+  String serverAddress = '';
+
   @override
   void initState() {
     routeObserver = RouteObserver<PageRoute>();
+    streamSocket = WebSocketStream();
     super.initState();
   }
 
@@ -56,17 +57,25 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     subscription = controller.scannedDataStream.listen((scanData) {
-      widget.onAddressChanged(scanData.code);
-      widget.onConnectActivated();
+      connect();
     });
   }
 
   @override
   void dispose() {
+    streamSocket.dispose();
     subscription?.cancel();
     controller?.dispose();
     routeObserver.unsubscribe(this);
     super.dispose();
+  }
+
+  void connect() async {
+    streamSocket.connectTo(serverAddress);
+    await streamSocket.waitUntilConnected(Duration(seconds: 10));
+    if (!streamSocket.isConnected()) {
+      widget.onConnected(streamSocket);
+    }
   }
 
   @override
@@ -113,9 +122,10 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
                               Container(
                                 width: MediaQuery.of(context).size.width - 144,
                                 child: TextField(
-                                  onSubmitted: (_) =>
-                                      widget.onConnectActivated(),
-                                  onChanged: widget.onAddressChanged,
+                                  onSubmitted: (_) => connect(),
+                                  onChanged: (text) {
+                                    serverAddress = text;
+                                  },
                                   decoration: InputDecoration(
                                     hintText: 'Plugin server address',
                                     hintStyle: TextStyle(
@@ -134,7 +144,7 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
                               ),
                               Spacer(),
                               OutlinedButton(
-                                onPressed: widget.onConnectActivated,
+                                onPressed: connect,
                                 style: OutlinedButton.styleFrom(
                                   fixedSize: Size(120, 45),
                                   textStyle: TextStyle(

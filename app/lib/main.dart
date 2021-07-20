@@ -1,11 +1,8 @@
 import 'package:duty_dialer/countdown_page.dart';
 import 'package:duty_dialer/se_license.dart';
 import 'package:duty_dialer/server_address_entry_view.dart';
-import 'package:duty_dialer/web_socket_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-
-WebSocketStream streamSocket = WebSocketStream();
 
 void main() {
   runApp(App());
@@ -67,8 +64,6 @@ class ServerAddressEntryPage extends StatefulWidget {
 }
 
 class _ServerAddressEntryPageState extends State<ServerAddressEntryPage> {
-  String serverAddress = '';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,22 +71,15 @@ class _ServerAddressEntryPageState extends State<ServerAddressEntryPage> {
       body: Stack(
         children: <Widget>[
           ServerAddressEntryView(
-            onAddressChanged: (text) {
-              serverAddress = text;
-            },
-            onConnectActivated: () async {
-              streamSocket.connectTo(serverAddress);
-              await streamSocket.waitUntilConnected(Duration(seconds: 10));
-              if (!streamSocket.isConnected()) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => CountdownPage(
-                      streamSocket: streamSocket,
-                    ),
+            onConnected: (streamSocket) {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => CountdownPage(
+                    streamSocket: streamSocket,
                   ),
-                );
-              }
+                ),
+              );
             },
           ),
           SquareEnixLicenseInfo(),
