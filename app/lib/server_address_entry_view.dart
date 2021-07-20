@@ -81,12 +81,12 @@ class _ServerAddressEntryViewState extends State<ServerAddressEntryView>
           QRView(
             key: GlobalKey(),
             onQRViewCreated: _onQRViewCreated,
-            formatsAllowed: [BarcodeFormat.qrcode],
+            formatsAllowed: const [BarcodeFormat.qrcode],
             overlay: QrScannerOverlayShape(
                 borderColor: const Color(0xFFFF9334),
                 borderRadius: 10,
-                borderLength: 50,
-                borderWidth: 10,
+                borderLength: 30,
+                borderWidth: 20,
                 cutOutSize: scanArea),
           ),
           Column(
