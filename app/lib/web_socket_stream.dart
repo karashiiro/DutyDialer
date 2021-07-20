@@ -3,10 +3,10 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
 class WebSocketStream {
-  final _socketResponse = StreamController<String>();
+  final _socketResponse = StreamController<String>.broadcast();
   IOWebSocketChannel? _channel;
 
-  Stream<String> get getResponse => _socketResponse.stream;
+  Stream<String> get getResponse => _socketResponse.stream.asBroadcastStream();
 
   Future waitUntilConnected(Duration timeout) {
     return Future.any([
