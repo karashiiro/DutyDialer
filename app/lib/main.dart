@@ -21,7 +21,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'DutyDialer',
       home: KeyboardVisibilityProvider(
-        child: HomePage(),
+        child: ServerAddressEntryPage(),
       ),
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFFFFEEDF),
@@ -61,12 +61,12 @@ class App extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
+class ServerAddressEntryPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _ServerAddressEntryPageState createState() => _ServerAddressEntryPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ServerAddressEntryPageState extends State<ServerAddressEntryPage> {
   String serverAddress = '';
 
   @override
