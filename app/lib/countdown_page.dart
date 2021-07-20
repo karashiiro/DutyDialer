@@ -95,7 +95,7 @@ class _CountdownPageState extends State<CountdownPage> {
                 elevation: 2.0,
                 fillColor: const Color(0xFFFF9334),
                 child: Icon(
-                  Icons.arrow_back,
+                  Icons.qr_code,
                   size: 35.0,
                 ),
                 padding: const EdgeInsets.all(10.0),
